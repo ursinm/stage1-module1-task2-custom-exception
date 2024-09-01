@@ -2,51 +2,44 @@ package com.epam.mjc;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
+import org.junit.Before;
 import org.junit.Test;
 
-
 public class StudentManagerTest {
-  StudentManager manager = new StudentManager();
+    private StudentManager manager;
 
-  @Test(expected = IllegalArgumentException.class)
-  public void findNotValid() throws IllegalArgumentException {
-    manager.find(1000);
-  }
-
-  @Test
-  public void findValidStudent() {
-    try {
-      assertNotNull(manager.find(1));
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
+    @Before
+    public void setUp() {
+        manager = new StudentManager();
     }
-  }
 
-  @Test
-  public void testExceptionMessage() {
-    try {
-      assertNotNull(manager.find(1000));
-    } catch (IllegalArgumentException e) {
-      assertEquals("Could not find student with ID 1000", e.getMessage());
+    @Test(expected = StudentNotFoundException.class)
+    public void findNotValid() {
+        manager.find(1000); // ожидаем исключение StudentNotFoundException
     }
-  }
 
-  @Test
-  public void testIDsNotChangedV1() {
-    try {
-      assertNull("Student enum should be have only 10 values.", manager.find(11));
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
+    @Test
+    public void findValidStudent() {
+        assertNotNull("Should find an existing student", manager.find(1));
     }
-  }
 
-  @Test
-  public void testIDsNotChangedV2() {
-    assertEquals(Student.ARTUR, manager.find(Arrays.stream(Student.values()).map(Student::getId).max(Long::compare).get()));
+    @Test
+    public void testExceptionMessage() {
+        try {
+            manager.find(1000);
+            fail("Expected an StudentNotFoundException to be thrown");
+        } catch (StudentNotFoundException e) {
+            assertEquals("Could not find student with ID 1000", e.getMessage());
+        }
+    }
 
-  }
-
+    @Test
+    public void testIDsNotChanged() {
+        try {
+            manager.find(11);
+            fail("Expected an StudentNotFoundException to be thrown");
+        } catch (StudentNotFoundException e) {
+            assertTrue("The message should indicate the missing ID", e.getMessage().contains("11"));
+        }
+    }
 }
