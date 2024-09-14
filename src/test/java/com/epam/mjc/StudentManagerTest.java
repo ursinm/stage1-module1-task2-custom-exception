@@ -11,35 +11,44 @@ public class StudentManagerTest {
     @Before
     public void setUp() {
         manager = new StudentManager();
+        // Добавляем студента с ID 1
+        manager.addStudent(new Student(1L, "John Doe"));
+        manager.addStudent(new Student(2L, "Jane Doe"));
     }
 
     @Test(expected = StudentNotFoundException.class)
     public void findNotValid() {
-        manager.find(1000); // ожидаем исключение StudentNotFoundException
+        // Ожидаем, что студент с ID 1000 не существует и будет выброшено исключение
+        manager.find(1000L);
     }
 
     @Test
     public void findValidStudent() {
-        assertNotNull("Should find an existing student", manager.find(1));
+        // Проверяем, что студент с ID 1 существует и успешно найден
+        Student student = manager.find(1L);
+        assertNotNull("Студент должен быть найден", student);
+        assertEquals("John Doe", student.getName());
     }
 
     @Test
     public void testExceptionMessage() {
+        // Проверяем, что выбрасывается правильное сообщение исключения
         try {
-            manager.find(1000);
-            fail("Expected an StudentNotFoundException to be thrown");
+            manager.find(1000L);
+            fail("Ожидалось исключение StudentNotFoundException");
         } catch (StudentNotFoundException e) {
-            assertEquals("Could not find student with ID 1000", e.getMessage());
+            assertEquals("Не удалось найти студента с ID 1000", e.getMessage());
         }
     }
 
     @Test
     public void testIDsNotChanged() {
+        // Проверяем, что выбрасывается исключение с корректным ID
         try {
-            manager.find(11);
-            fail("Expected an StudentNotFoundException to be thrown");
+            manager.find(11L);
+            fail("Ожидалось исключение StudentNotFoundException");
         } catch (StudentNotFoundException e) {
-            assertTrue("The message should indicate the missing ID", e.getMessage().contains("11"));
+            assertTrue("Сообщение должно содержать ID 11", e.getMessage().contains("11"));
         }
     }
 }
