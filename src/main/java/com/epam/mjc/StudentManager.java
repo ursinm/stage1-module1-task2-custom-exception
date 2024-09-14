@@ -1,23 +1,21 @@
 package com.epam.mjc;
 
+import java.util.HashMap;
+import java.util.Map;
 
 public class StudentManager {
-    private Map<String, Student> studentMap;
+    private Map<Long, String> students = new HashMap<>();
 
-    public StudentManager() {
-        this.studentMap = new HashMap<>();
+    // Метод для добавления студентов в систему (опционально)
+    public void addStudent(Long id, String name) {
+        students.put(id, name);
     }
 
-    // Добавление студента в систему
-    public void addStudent(Student student) {
-        studentMap.put(student.getId(), student);
-    }
-
-    // Поиск студента по ID
-    public Student find(String id) throws StudentNotFoundException {
-        if (!studentMap.containsKey(id)) {
-            throw new StudentNotFoundException(id);
+    // Метод поиска студента по ID
+    public String find(Long id) {
+        if (!students.containsKey(id)) {
+            throw new StudentNotFoundException(id); // Выбрасываем пользовательское исключение
         }
-        return studentMap.get(id);
+        return students.get(id); // Возвращаем имя студента, если найден
     }
 }
